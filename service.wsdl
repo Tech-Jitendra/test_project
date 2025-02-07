@@ -1,0 +1,51 @@
+<definitions name="BankPaymentService" targetNamespace="http://example.com/bankpayment"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:tns="http://example.com/bankpayment"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <!-- Request Message -->
+  <message name="VFI_GetAuthRequest">
+    <part name="ReferenceNumber" type="xsd:string"/>
+    <part name="TransactionType" type="xsd:string"/>
+    <part name="TransactionAmount" type="xsd:decimal"/>
+    <part name="InvoiceNo" type="xsd:string" minOccurs="0"/>
+  </message>
+
+  <!-- Response Message -->
+  <message name="VFI_GetAuthResponse">
+    <part name="Status" type="xsd:string"/>
+    <part name="Message" type="xsd:string"/>
+    <part name="TransactionID" type="xsd:string"/>
+  </message>
+
+  <!-- Service Port Type -->
+  <portType name="BankPaymentPort">
+    <operation name="VFI_GetAuth">
+      <input message="tns:VFI_GetAuthRequest"/>
+      <output message="tns:VFI_GetAuthResponse"/>
+    </operation>
+  </portType>
+
+  <!-- Binding -->
+  <binding name="BankPaymentBinding" type="tns:BankPaymentPort">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="VFI_GetAuth">
+      <soap:operation soapAction="http://example.com/bankpayment/VFI_GetAuth"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- Service Definition -->
+  <service name="BankPaymentService">
+    <port name="BankPaymentPort" binding="tns:BankPaymentBinding">
+      <soap:address location="http://localhost:3000/wsdl"/>
+    </port>
+  </service>
+
+</definitions>
