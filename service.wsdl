@@ -1,37 +1,33 @@
-<definitions name="BankPaymentService" targetNamespace="http://example.com/bankpayment"
+<?xml version="1.0"?>
+<definitions name="PaymentService" targetNamespace="http://example.com/paymentservice"
   xmlns="http://schemas.xmlsoap.org/wsdl/"
-  xmlns:tns="http://example.com/bankpayment"
+  xmlns:tns="http://example.com/paymentservice"
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-  <!-- Request Message -->
   <message name="VFI_GetAuthRequest">
     <part name="ReferenceNumber" type="xsd:string"/>
     <part name="TransactionType" type="xsd:string"/>
-    <part name="TransactionAmount" type="xsd:decimal"/>
-    <part name="InvoiceNo" type="xsd:string" minOccurs="0"/>
+    <part name="TransactionAmount" type="xsd:string"/>
+    <part name="InvoiceNo" type="xsd:string"/>
   </message>
 
-  <!-- Response Message -->
   <message name="VFI_GetAuthResponse">
-    <part name="Status" type="xsd:string"/>
-    <part name="Message" type="xsd:string"/>
-    <part name="TransactionID" type="xsd:string"/>
+    <part name="status" type="xsd:string"/>
+    <part name="message" type="xsd:string"/>
   </message>
 
-  <!-- Service Port Type -->
-  <portType name="BankPaymentPort">
+  <portType name="PaymentServicePort">
     <operation name="VFI_GetAuth">
       <input message="tns:VFI_GetAuthRequest"/>
       <output message="tns:VFI_GetAuthResponse"/>
     </operation>
   </portType>
 
-  <!-- Binding -->
-  <binding name="BankPaymentBinding" type="tns:BankPaymentPort">
-    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <binding name="PaymentServiceBinding" type="tns:PaymentServicePort">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="VFI_GetAuth">
-      <soap:operation soapAction="http://example.com/bankpayment/VFI_GetAuth"/>
+      <soap:operation soapAction="http://example.com/paymentservice/VFI_GetAuth"/>
       <input>
         <soap:body use="literal"/>
       </input>
@@ -41,11 +37,9 @@
     </operation>
   </binding>
 
-  <!-- Service Definition -->
-  <service name="BankPaymentService">
-    <port name="BankPaymentPort" binding="tns:BankPaymentBinding">
+  <service name="PaymentService">
+    <port name="PaymentServicePort" binding="tns:PaymentServiceBinding">
       <soap:address location="http://localhost:3000/wsdl"/>
     </port>
   </service>
-
 </definitions>

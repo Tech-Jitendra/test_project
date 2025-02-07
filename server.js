@@ -1,41 +1,41 @@
-// const fs = require("fs");
-// const express = require("express");
+const express = require("express");
 const soap = require("soap");
 const bodyParser = require("body-parser");
+const fs = require("fs");
 
-// const app = express();
-// const soap = require('soap');
-const http = require('http');
+const app = express();
+const PORT = 3000;
 
-// Define service methods
+app.use(bodyParser.raw({ type: () => true, limit: "5mb" }));
+
+// Service Logic
 const service = {
-  BankPaymentService: {
-    BankPaymentPort: {
-      VFI_GetAuth: function (args, callback) {
+  PaymentService: {
+    PaymentServicePort: {
+      VFI_GetAuth: function (args) {
+        if (!args.ReferenceNumber || !args.TransactionType || !args.TransactionAmount) {
+          throw new Error("Missing required fields: ReferenceNumber, TransactionType, or TransactionAmount");
+        }
+        
         console.log("Received request:", args);
-
-        // Mock Response Data
-        const response = {
-          Status: "Success",
-          Message: "Transaction Approved",
-          TransactionID: "TXN12345678"
+        
+        // Simulate processing and sending request to VeriFone POS
+        return {
+          status: "Processing",
+          message: `Transaction initiated for ReferenceNumber: ${args.ReferenceNumber}`,
         };
-
-        callback(null, response);
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
-// Load WSDL
-const xml = require('fs').readFileSync('bankpayment.wsdl', 'utf8');
-const server = http.createServer((req, res) => {
-  res.end("SOAP API Running...");
-});
+// Read the WSDL file
+const wsdlPath = "./service.wsdl";
+const wsdl = fs.readFileSync(wsdlPath, "utf8");
 
-// Create SOAP Server
-soap.listen(server, "/wsdl", service, xml);
-
-server.listen(3000, () => {
-  console.log("SOAP API listening on port 3000");
+// Create SOAP server
+app.listen(PORT, () => {
+  soap.listen(app, "/wsdl", service, wsdl, () => {
+    console.log(`SOAP service is running at http://localhost:${PORT}/wsdl?wsdl`);
+  });
 });
